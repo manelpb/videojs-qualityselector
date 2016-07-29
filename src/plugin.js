@@ -29,8 +29,6 @@ const onQualitySelect = (quality) => {
 				player.play();	
 			});			
 		}
-
-		console.log(source);
 	}
 
 	onToggleDropdown();

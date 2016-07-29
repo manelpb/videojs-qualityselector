@@ -2,6 +2,8 @@
 
 Simple plugin that displays a dropdown with a list of possible videos based on its resolution, also changes the source when the user selects a desired option
 
+![alt tag](https://raw.githubusercontent.com/manelpb/videojs-qualityselector/master/screenshot.png)
+
 ## Installation
 
 ```sh
@@ -22,38 +24,40 @@ This is the simplest case. Get the script in whatever way you prefer and include
 <script>
   var player = videojs('my-video');
 
-  player.qualityselector();
+  player.qualityselector({
+        sources: [
+          { format: 'highres', src: 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4', type: 'video/mp4'},
+          { format: 'hd1080', src: 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4', type: 'video/mp4'},
+          { format: 'hd720', src: 'http://www.sample-videos.com/video/mp4/480/big_buck_bunny_480p_1mb.mp4', type: 'video/mp4'},
+          { format: 'large', src: '//vjs.zencdn.net/v/oceans.mp4', type: 'video/mp4'},
+          { format: 'medium', src: 'http://www.sample-videos.com/video/mp4/480/big_buck_bunny_480p_1mb.mp4', type: 'video/mp4'},
+          { format: 'small', src: 'http://www.sample-videos.com/video/mp4/480/big_buck_bunny_480p_1mb.mp4', type: 'video/mp4'},
+          { format: 'auto', src: 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4', type: 'video/mp4'}
+        ],
+        formats: [
+          { code: 'highres', name: 'High' },
+          { code: 'hd1080', name: '1080p' },
+          { code: 'hd720', name: '720p' },
+          { code: 'large', name: '480p' },
+          { code: 'medium', name: '360p' },
+          { code: 'small', name: '240p' },
+          { code: 'auto', name: 'Auto' }
+        ],
+
+        onFormatSelected: function(format) {
+          console.log(format);
+        }
+      });
 </script>
 ```
 
-### Browserify
+### Sources
 
-When using with Browserify, install videojs-qualityselector via npm and `require` the plugin as you would any other module.
+An array of video sources matching the formats
 
-```js
-var videojs = require('video.js');
+### Formats
 
-// The actual plugin function is exported by this module, but it is also
-// attached to the `Player.prototype`; so, there is no need to assign it
-// to a variable.
-require('videojs-qualityselector');
-
-var player = videojs('my-video');
-
-player.qualityselector();
-```
-
-### RequireJS/AMD
-
-When using with RequireJS (or another AMD library), get the script in whatever way you prefer and `require` the plugin as you normally would:
-
-```js
-require(['video.js', 'videojs-qualityselector'], function(videojs) {
-  var player = videojs('my-video');
-
-  player.qualityselector();
-});
-```
+An array of possible formats, it should contains a code and name
 
 
 ## License

@@ -1,0 +1,14 @@
+{
+  "name": "videojs-qualityselector",
+  "author": "Emmanuel Alves &lt;manel.pb@gmail.com&gt;",
+  "license": "MIT",
+  "main": [
+    "dist/videojs-qualityselector.css",
+    "dist/videojs-qualityselector.min.js"
+  ],
+  "keywords": [
+    "videojs",
+    "videojs-plugin"
+  ]
+}
+

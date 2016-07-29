@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>videojs-qualityselector Demo</title>
+  <link href="/node_modules/video.js/dist/video-js.css" rel="stylesheet">
+  <link href="/dist/videojs-qualityselector.css" rel="stylesheet">
+</head>
+<body>
+  <video id="videojs-qualityselector-player" style="width: 800px; height: 400px" class="video-js vjs-default-skin vjs-big-play-centered" controls>
+    <source src="//vjs.zencdn.net/v/oceans.mp4" type='video/mp4'>
+    <source src="//vjs.zencdn.net/v/oceans.webm" type='video/webm'>
+  </video>
+  <ul>
+    <li><a href="/test/">Run unit tests in browser.</a></li>
+    
+  </ul>
+  <script src="/node_modules/video.js/dist/video.js"></script>
+  <script src="/dist/videojs-qualityselector.js"></script>
+  <script>
+    (function(window, videojs) {
+      var player = window.player = videojs('videojs-qualityselector-player');
+      player.qualityselector({
+        sources: [
+          { format: 'highres', src: 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4', type: 'video/mp4'},
+          { format: 'hd1080', src: 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4', type: 'video/mp4'},
+          { format: 'hd720', src: 'http://www.sample-videos.com/video/mp4/480/big_buck_bunny_480p_1mb.mp4', type: 'video/mp4'},
+          { format: 'large', src: '//vjs.zencdn.net/v/oceans.mp4', type: 'video/mp4'},
+          { format: 'medium', src: 'http://www.sample-videos.com/video/mp4/480/big_buck_bunny_480p_1mb.mp4', type: 'video/mp4'},
+          { format: 'small', src: 'http://www.sample-videos.com/video/mp4/480/big_buck_bunny_480p_1mb.mp4', type: 'video/mp4'},
+          { format: 'auto', src: 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4', type: 'video/mp4'}
+        ],
+        formats: [
+          { code: 'highres', name: 'High' },
+          { code: 'hd1080', name: '1080p' },
+          { code: 'hd720', name: '720p' },
+          { code: 'large', name: '480p' },
+          { code: 'medium', name: '360p' },
+          { code: 'small', name: '240p' },
+          { code: 'auto', name: 'Auto' }
+        ],
+        onFormatSelected: function(format) {
+          console.log(format);
+        }
+      });
+
+      player.volume(0);
+      player.play();
+    }(window, window.videojs));
+  </script>
+</body>
+</html>

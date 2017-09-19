@@ -26,8 +26,8 @@ const onQualitySelect = (quality) => {
 			player.src({ src: source.src, type: source.type });
 
 			player.on("loadedmetadata", function() {
-				player.play();	
-			});			
+				player.play();
+			});
 		}
 	}
 
@@ -66,7 +66,7 @@ const onPlayerReady = (player, options) => {
 	let buttonElement = document.createElement("button");
 	buttonElement.className = "vjs-brand-quality-link";
 	buttonElement.onclick = onToggleDropdown;
-	buttonElement.innerText = "Quality";
+	buttonElement.innerText = options.text || "Quality";
 
 	let ulElement = document.createElement("ul");
 
@@ -81,7 +81,7 @@ const onPlayerReady = (player, options) => {
 	if(options.sources) {
 		sources = options.sources;
 	}
-	
+
 	options.formats.map(function(format) {
 		let liElement = document.createElement("li");
 
@@ -126,7 +126,7 @@ const qualityselector = function(options) {
 };
 
 // Register the plugin with video.js.
-videojs.plugin('qualityselector', qualityselector);
+videojs.registerPlugin('qualityselector', qualityselector);
 
 // Include the version number.
 qualityselector.VERSION = '__VERSION__';

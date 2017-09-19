@@ -88,7 +88,7 @@ const onPlayerReady = (player, options) => {
 		let linkElement = document.createElement("a");
 		linkElement.innerText = format.name;
 		linkElement.setAttribute("href", "#");
-		linkElement.addEventListener("click", function() {
+		linkElement.addEventListener("click", function(event) {
 			event.preventDefault();
 			onQualitySelect(format);
 		});

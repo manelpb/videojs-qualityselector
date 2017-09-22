@@ -1,110 +1,110 @@
 import videojs from 'video.js';
 
-// Default options for the plugin.
-const defaults = {};
+class QualitySelector {
+	constructor(player) {
+		this.player = player;
+		this.sources = [];
+		this.callback = undefined;
+		this.containerDropdownElement = undefined;
+		this.defaults = {};
+	}
 
-let sources;
-let callback;
-let player;
-let containerDropdownElement;
+  /**
+   * event on selected the quality
+   */
+  onQualitySelect(quality) {
+		if(this.callback) {
+      this.callback(quality);
+		};
 
-/**
-* event on selected the quality
-*/
-const onQualitySelect = (quality) => {
-	if(callback) {
-		callback(quality);
+		if(this.sources) {
+			// tries to find the source with this quality
+			let source = this.sources.find(source => source.format == quality.code);
+
+			if(source) {
+        this.player.src({ src: source.src, type: source.type });
+
+        this.player.on("loadedmetadata", () => {
+          this.player.play();
+				});
+			}
+		}
+
+    this.onToggleDropdown();
 	};
 
-	if(sources) {
-		// tries to find the source with this quality
-		let source = sources.find(source => source.format == quality.code);
-
-		if(source) {
-			let currentTime = player.currentTime();
-
-			player.src({ src: source.src, type: source.type });
-
-			player.on("loadedmetadata", function() {
-				player.play();
-			});
+  /**
+   * show or hide the dropdown
+   */
+	onToggleDropdown() {
+		if(this.containerDropdownElement.className.indexOf("show") == -1) {
+			this.containerDropdownElement.className += " show";
+		} else {
+			this.containerDropdownElement.className = this.containerDropdownElement.className.replace(" show", "");
 		}
-	}
+	};
 
-	onToggleDropdown();
-};
+  /**
+   * Function to invoke when the player is ready.
+   *
+   * This is a great place for your plugin to initialize itself. When this
+   * function is called, the player will have its DOM and child components
+   * in place.
+   *
+   * @function onPlayerReady
+   * @param    {Player} player
+   * @param    {Object} [options={}]
+   */
+  onPlayerReady(options) {
+		this.containerDropdownElement = document.createElement("div");
+    this.containerDropdownElement.className = "vjs-quality-dropdown";
 
-/**
-* show or hide the dropdown
-*/
-const onToggleDropdown = () => {
-		if(containerDropdownElement.className.indexOf("show") == -1) {
-        containerDropdownElement.className += " show";
-    } else {
-        containerDropdownElement.className = containerDropdownElement.className.replace(" show", "");
-    }
-};
+		let containerElement = document.createElement("div");
+		containerElement.className = "vjs-quality-container";
 
-/**
- * Function to invoke when the player is ready.
- *
- * This is a great place for your plugin to initialize itself. When this
- * function is called, the player will have its DOM and child components
- * in place.
- *
- * @function onPlayerReady
- * @param    {Player} player
- * @param    {Object} [options={}]
- */
-const onPlayerReady = (player, options) => {
-	containerDropdownElement = document.createElement("div");
-	containerDropdownElement.className = "vjs-quality-dropdown";
+		let buttonElement = document.createElement("button");
+		buttonElement.className = "vjs-brand-quality-link";
+		buttonElement.onclick = (event) => this.onToggleDropdown(event);
+		buttonElement.innerText = options.text || "Quality";
 
-	let containerElement = document.createElement("div");
-	containerElement.className = "vjs-quality-container";
+		let ulElement = document.createElement("ul");
 
-	let buttonElement = document.createElement("button");
-	buttonElement.className = "vjs-brand-quality-link";
-	buttonElement.onclick = onToggleDropdown;
-	buttonElement.innerText = options.text || "Quality";
+		if(!options.formats) {
+			options.formats = [{ code: 'auto', name: 'Auto' }];
+		}
 
-	let ulElement = document.createElement("ul");
+		if(options.onFormatSelected) {
+      this.callback = options.onFormatSelected;
+		}
 
-	if(!options.formats) {
-		options.formats = [{ code: 'auto', name: 'Auto' }];
-	}
+		if(options.sources) {
+      this.sources = options.sources;
+		}
 
-	if(options.onFormatSelected) {
-		callback = options.onFormatSelected;
-	}
+		options.formats.map((format) => {
+			let liElement = document.createElement("li");
 
-	if(options.sources) {
-		sources = options.sources;
-	}
+			let linkElement = document.createElement("a");
+			linkElement.innerText = format.name;
+			linkElement.setAttribute("href", "#");
+			linkElement.addEventListener("click", (event) => {
+				event.preventDefault();
+				this.onQualitySelect(format);
+			});
 
-	options.formats.map(function(format) {
-		let liElement = document.createElement("li");
-
-		let linkElement = document.createElement("a");
-		linkElement.innerText = format.name;
-		linkElement.setAttribute("href", "#");
-		linkElement.addEventListener("click", function(event) {
-			event.preventDefault();
-			onQualitySelect(format);
+			liElement.appendChild(linkElement);
+			ulElement.appendChild(liElement);
 		});
 
-		liElement.appendChild(linkElement);
-		ulElement.appendChild(liElement);
-	});
+    this.containerDropdownElement.appendChild(ulElement);
+		containerElement.appendChild(this.containerDropdownElement);
+		containerElement.appendChild(buttonElement);
 
-	containerDropdownElement.appendChild(ulElement);
-	containerElement.appendChild(containerDropdownElement);
-	containerElement.appendChild(buttonElement);
+    this.player.controlBar.el().insertBefore(containerElement, this.player.controlBar.fullscreenToggle.el());
 
-	player.controlBar.el().insertBefore(containerElement, player.controlBar.fullscreenToggle.el());
-
-  player.addClass('vjs-qualityselector');
-};
+    this.player.addClass('vjs-qualityselector');
+	};
+}
 
 /**
  * A video.js plugin.
@@ -120,8 +120,9 @@ const onPlayerReady = (player, options) => {
  */
 const qualityselector = function(options) {
   this.ready(() => {
-  	player = this;
-    onPlayerReady(this, videojs.mergeOptions(defaults, options));
+  	const player = this;
+  	let qualityControl = new QualitySelector(player);
+    qualityControl.onPlayerReady(videojs.mergeOptions(qualityControl.defaults, options));
   });
 };
 

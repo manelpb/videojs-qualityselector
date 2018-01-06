@@ -83,6 +83,7 @@ class QualitySelector {
 
 		options.formats.map((format) => {
 			let liElement = document.createElement("li");
+			liElement.dataset.code = format.code;
 
 			let linkElement = document.createElement("a");
 			linkElement.innerText = format.name;
@@ -103,7 +104,20 @@ class QualitySelector {
     this.player.controlBar.el().insertBefore(containerElement, this.player.controlBar.fullscreenToggle.el());
 
     this.player.addClass('vjs-qualityselector');
-	};
+
+	this.player.on("loadedmetadata", () => {
+		const removeHttpPrefix = url => url.replace(/(^\w+:|^)\/\//, '');
+		const current_src = removeHttpPrefix(this.player.currentSrc());
+		const current = this.sources.find(ele => removeHttpPrefix(ele.src) === current_src);
+		Array.from(this.containerDropdownElement.firstChild.childNodes).forEach(ele => {
+			if (ele.dataset.code === current.format) {
+				ele.setAttribute("class", "current");
+			} else {
+				ele.removeAttribute("class");
+			}
+		});
+	});
+  };
 }
 
 /**

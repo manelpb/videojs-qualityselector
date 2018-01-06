@@ -127,7 +127,8 @@ const qualityselector = function(options) {
 };
 
 // Register the plugin with video.js.
-videojs.registerPlugin('qualityselector', qualityselector);
+const registerPlugin = videojs.registerPlugin || videojs.plugin;
+registerPlugin('qualityselector', qualityselector);
 
 // Include the version number.
 qualityselector.VERSION = '__VERSION__';

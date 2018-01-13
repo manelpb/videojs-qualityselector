@@ -25,8 +25,22 @@ class QualitySelector {
         this.player.src({ src: source.src, type: source.type });
 
         this.player.on("loadedmetadata", () => {
-          this.player.play();
+					this.player.play();
+
+					Array.from(this.containerDropdownElement.firstChild.childNodes).forEach(ele => {
+						if (ele.dataset.code === quality.code) {
+							ele.setAttribute("class", "current");
+						} else {
+							ele.removeAttribute("class");
+						}
+					});
 				});
+			}
+
+			const qualitySelector = document.getElementById(this.player.id_).getElementsByClassName('vjs-brand-quality-link');
+
+			if (qualitySelector && qualitySelector.length > 0) {
+				qualitySelector[0].innerText = quality.name;
 			}
 		}
 
@@ -105,18 +119,22 @@ class QualitySelector {
 
     this.player.addClass('vjs-qualityselector');
 
-	this.player.on("loadedmetadata", () => {
-		const removeHttpPrefix = url => url.replace(/(^\w+:|^)\/\//, '');
-		const current_src = removeHttpPrefix(this.player.currentSrc());
-		const current = this.sources.find(ele => removeHttpPrefix(ele.src) === current_src);
-		Array.from(this.containerDropdownElement.firstChild.childNodes).forEach(ele => {
-			if (ele.dataset.code === current.format) {
-				ele.setAttribute("class", "current");
-			} else {
-				ele.removeAttribute("class");
-			}
-		});
-	});
+		/*this.player.on("loadedmetadata", () => {
+
+			console.log(options);
+
+
+			const removeHttpPrefix = url => url.replace(/(^\w+:|^)\/\//, '');
+			const current_src = removeHttpPrefix(this.player.currentSrc());
+			const current = this.sources.find(ele => removeHttpPrefix(ele.src) === current_src);
+			Array.from(this.containerDropdownElement.firstChild.childNodes).forEach(ele => {
+				if (ele.dataset.code === current.format) {
+					ele.setAttribute("class", "current");
+				} else {
+					ele.removeAttribute("class");
+				}
+			});
+		});*/
   };
 }
 

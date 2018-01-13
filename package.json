@@ -1,6 +1,6 @@
 {
   "name": "videojs-qualityselector",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Simple plugin that displays a dropdown with a list of possible videos based on its resolution, also changes the source when the user selects a desired option",
   "main": "es5/plugin.js",
   "scripts": {

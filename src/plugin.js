@@ -23,8 +23,10 @@ class QualitySelector {
 
       if (source) {
         this.player.src({ src: source.src, type: source.type });
+        let whereYouAt = this.player.currentTime();
 
         this.player.on('loadedmetadata', () => {
+          this.player.currentTime(whereYouAt);
           this.player.play();
 
           Array.from(this.containerDropdownElement.firstChild.childNodes).forEach(ele => {

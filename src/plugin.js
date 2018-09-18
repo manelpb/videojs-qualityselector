@@ -158,7 +158,7 @@ class QualitySelector {
     this.player.addClass('vjs-qualityselector');
 
     if (this.defaultFormat) {
-      this.setPlayerSource();
+      this.setPlayerSource(this.defaultFormat);
     }
   }
 }

@@ -7,6 +7,7 @@ class QualitySelector {
     this.callback = undefined;
     this.containerDropdownElement = undefined;
     this.defaults = {};
+    this.changeQualityName = true;
   }
 
 	/**
@@ -40,7 +41,7 @@ class QualitySelector {
       const player = document.getElementById(this.player.id_);
       const qualitySelector = player.getElementsByClassName('vjs-brand-quality-link');
 
-      if (qualitySelector && qualitySelector.length > 0) {
+      if (this.changeQualityName && qualitySelector && qualitySelector.length > 0) {
         qualitySelector[0].innerText = quality.name;
       }
     }
@@ -98,6 +99,10 @@ class QualitySelector {
 
     if (options.sources) {
       this.sources = options.sources;
+    }
+
+    if (options.hasOwnProperty('changeQualityName')) {
+      this.changeQualityName = options.changeQualityName;
     }
 
     options.formats.map((format) => {

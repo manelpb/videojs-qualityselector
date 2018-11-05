@@ -5,6 +5,7 @@ class QualitySelector {
     this.player = player;
     this.sources = [];
     this.callback = undefined;
+    this.defaultFormat = undefined;
     this.containerDropdownElement = undefined;
     this.defaults = {};
     this.changeQualityName = true;
@@ -18,35 +19,55 @@ class QualitySelector {
       this.callback(quality);
     }
 
-    if (this.sources) {
-      // tries to find the source with this quality
-      let source = this.sources.find(ss => ss.format === quality.code);
+    let source = this.setPlayerSource(quality.code);
 
-      if (source) {
-        this.player.src({ src: source.src, type: source.type });
+    if (source) {
+      this.player.on('loadedmetadata', () => {
+        this.player.play();
 
-        this.player.on('loadedmetadata', () => {
-          this.player.play();
-
-          Array.from(this.containerDropdownElement.firstChild.childNodes).forEach(ele => {
-            if (ele.dataset.code === quality.code) {
-              ele.setAttribute('class', 'current');
-            } else {
-              ele.removeAttribute('class');
-            }
-          });
+        Array.from(this.containerDropdownElement.firstChild.childNodes).forEach(ele => {
+          if (ele.dataset.code === quality.code) {
+            ele.setAttribute('class', 'current');
+          } else {
+            ele.removeAttribute('class');
+          }
         });
-      }
-
-      const player = document.getElementById(this.player.id_);
-      const qualitySelector = player.getElementsByClassName('vjs-brand-quality-link');
-
-      if (this.changeQualityName && qualitySelector && qualitySelector.length > 0) {
-        qualitySelector[0].innerText = quality.name;
-      }
+      });
+      this.changeQualitySelectorLabel(quality.name);
     }
 
     this.onToggleDropdown();
+  }
+
+  /**
+   * Set the main video source of the player with the given format code
+   * @param {string} formatCode
+   * @returns {Object} the source if the player has been updated
+   */
+  setPlayerSource(formatCode) {
+    if (this.sources) {
+      // tries to find the source with this quality
+      let source = this.sources.find(ss => ss.format === formatCode);
+
+      if (source) {
+        this.player.src({ src: source.src, type: source.type });
+        return source;
+      }
+    }
+    return;
+  }
+
+  /**
+   * Change the displayed quality label in the controlbar
+   * @param {string} label
+   */
+  changeQualitySelectorLabel(label) {
+    const player = document.getElementById(this.player.id_);
+    const qualitySelector = player.getElementsByClassName('vjs-brand-quality-link');
+
+    if (this.changeQualityName && qualitySelector && qualitySelector.length > 0) {
+      qualitySelector[0].innerText = label;
+    }
   }
 
 	/**
@@ -85,7 +106,7 @@ class QualitySelector {
 
     buttonElement.className = 'vjs-brand-quality-link';
     buttonElement.onclick = (event) => this.onToggleDropdown(event);
-    buttonElement.innerText = options.text || 'Quality';
+    buttonElement.innerText = 'Quality';
 
     let ulElement = document.createElement('ul');
 
@@ -101,6 +122,10 @@ class QualitySelector {
       this.sources = options.sources;
     }
 
+    if (options.defaultFormat) {
+      this.defaultFormat = options.defaultFormat;
+    }
+    
     if (options.hasOwnProperty('changeQualityName')) {
       this.changeQualityName = options.changeQualityName;
     }
@@ -109,6 +134,10 @@ class QualitySelector {
       let liElement = document.createElement('li');
 
       liElement.dataset.code = format.code;
+      if (format.code === this.defaultFormat) {
+        liElement.setAttribute('class', 'current');
+        buttonElement.innerText = format.name;
+      }
 
       let linkElement = document.createElement('a');
 
@@ -132,6 +161,10 @@ class QualitySelector {
     this.player.controlBar.el().insertBefore(containerElement, fullScreenToggle);
 
     this.player.addClass('vjs-qualityselector');
+
+    if (this.defaultFormat) {
+      this.setPlayerSource(this.defaultFormat);
+    }
   }
 }
 
